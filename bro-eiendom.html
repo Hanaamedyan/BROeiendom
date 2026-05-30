@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bro Eiendomsrådgivning AS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/outfit@5/index.css"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --ink:        #0F0F0F;
+      --ink-2:      #2A2A2A;
+      --teal:       #0A3D4A;
+      --teal-2:     #0F5168;
+      --teal-lt:    #E8F3F6;
+      --teal-dim:   rgba(10,61,74,.08);
+      --gold:       #B8914A;
+      --gold-lt:    #F5E8D0;
+      --warm:       #F9F7F4;
+      --warm-2:     #F2EDE6;
+      --border:     #E4DDD4;
+      --muted:      #7A7068;
+      --muted-2:    #B0A89E;
+      --white:      #FFFFFF;
+      --text:       #0F0F0F;
+      --text-2:     #3D3530;
+      --shadow:     0 2px 16px rgba(15,15,15,.06);
+      --shadow-md:  0 8px 32px rgba(15,15,15,.10);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--white); color:var(--text); font-family:'Inter',sans-serif; overflow-x:hidden; }
+    ::-webkit-scrollbar { width:3px; }
+    ::-webkit-scrollbar-track { background:var(--warm); }
+    ::-webkit-scrollbar-thumb { background:var(--teal); border-radius:2px; }
+
+    /* ── REVEAL ── */
+    .reveal { opacity:0; transform:translateY(32px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+    .reveal.on { opacity:1; transform:translateY(0); }
+    .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
+    .reveal-l { opacity:0; transform:translateX(-40px); transition:opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
+    .reveal-l.on { opacity:1; transform:translateX(0); }
+    .img-wipe { clip-path:inset(0 100% 0 0); transition:clip-path 1s cubic-bezier(.77,0,.18,1); }
+    .img-wipe.on { clip-path:inset(0 0% 0 0); }
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      height:68px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 56px;
+      transition:background .3s, border-bottom .3s, box-shadow .3s;
+    }
+    nav.scrolled {
+      background:rgba(255,255,255,.97);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      box-shadow:var(--shadow);
+    }
+    .nav-logo { display:flex; flex-direction:column; text-decoration:none; cursor:pointer; }
+    .nav-logo-top {
+      font-family:'Playfair Display', serif;
+      font-size:17px; font-weight:600; letter-spacing:.3px; color:var(--ink); line-height:1.1;
+    }
+    .nav-logo-sub {
+      font-size:9px; font-weight:500; letter-spacing:3px; text-transform:uppercase;
+      color:var(--teal); margin-top:2px;
+    }
+
+    .nav-links { display:flex; align-items:center; gap:36px; list-style:none; }
+    .nav-links a {
+      font-size:12px; font-weight:500; letter-spacing:.5px; color:var(--muted);
+      text-decoration:none; cursor:pointer; transition:color .2s; position:relative;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:-3px; left:0; right:0;
+      height:1px; background:var(--teal);
+      transform:scaleX(0); transform-origin:left; transition:transform .25s;
+    }
+    .nav-links a:hover { color:var(--ink); }
+    .nav-links a:hover::after { transform:scaleX(1); }
+
+    .nav-cta {
+      font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+      color:var(--white); background:var(--teal);
+      padding:10px 22px; text-decoration:none; cursor:pointer;
+      transition:background .2s, transform .2s;
+    }
+    .nav-cta:hover { background:var(--teal-2); transform:translateY(-1px); }
+
+    .burger { display:none; flex-direction:column; gap:4px; cursor:pointer; background:none; border:none; padding:8px; }
+    .burger span { display:block; width:20px; height:1.5px; background:var(--ink); transition:all .3s; }
+    .mob-nav {
+      display:none; position:fixed; inset:0; background:var(--white); z-index:99;
+      flex-direction:column; align-items:center; justify-content:center; gap:24px;
+      border-top:2px solid var(--teal);
+    }
+    .mob-nav.open { display:flex; }
+    .mob-nav a {
+      font-family:'Playfair Display', serif; font-size:40px; font-weight:500;
+      color:var(--ink); text-decoration:none; cursor:pointer; transition:color .2s;
+    }
+    .mob-nav a:hover { color:var(--teal); }
+
+    /* ── HERO ── */
+    #hjem {
+      display:grid; grid-template-columns:1fr 1fr; min-height:100vh;
+      padding-top:68px;
+    }
+    .hero-text {
+      display:flex; flex-direction:column; justify-content:center;
+      padding:80px 72px 80px 56px;
+      background:var(--white);
+    }
+    .hero-tag {
+      display:inline-flex; align-items:center; gap:10px;
+      font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase;
+      color:var(--teal); margin-bottom:28px;
+      opacity:0; transform:translateY(10px); transition:opacity .6s .2s, transform .6s .2s;
+    }
+    #hjem.on .hero-tag { opacity:1; transform:translateY(0); }
+    .hero-tag-line { width:28px; height:1px; background:var(--teal); }
+
+    .hero-title {
+      font-family:'Playfair Display', serif;
+      font-size:clamp(44px, 5vw, 68px);
+      font-weight:400; line-height:1.15; letter-spacing:-.5px;
+      color:var(--ink); margin-bottom:28px;
+    }
+    .hero-title .line { display:block; overflow:hidden; }
+    .hero-title .line span { display:block; transform:translateY(110%); transition:transform .9s cubic-bezier(.16,1,.3,1); }
+    #hjem.on .hero-title .line:nth-child(1) span { transform:translateY(0); transition-delay:.3s; }
+    #hjem.on .hero-title .line:nth-child(2) span { transform:translateY(0); transition-delay:.44s; }
+    #hjem.on .hero-title .line:nth-child(3) span { transform:translateY(0); transition-delay:.58s; }
+    .hero-title .italic { font-style:italic; color:var(--teal); }
+
+    .hero-rule {
+      width:48px; height:1px; background:var(--gold); margin:28px 0;
+      opacity:0; transition:opacity .6s .8s, width .8s .8s;
+    }
+    #hjem.on .hero-rule { opacity:1; width:48px; }
+
+    .hero-sub {
+      font-size:15px; font-weight:300; color:var(--muted); line-height:1.9;
+      max-width:400px; margin-bottom:40px;
+      opacity:0; transform:translateY(10px); transition:opacity .7s .88s, transform .7s .88s;
+    }
+    #hjem.on .hero-sub { opacity:1; transform:translateY(0); }
+
+    .hero-ctas {
+      display:flex; gap:14px; flex-wrap:wrap;
+      opacity:0; transform:translateY(10px); transition:opacity .7s 1.02s, transform .7s 1.02s;
+    }
+    #hjem.on .hero-ctas { opacity:1; transform:translateY(0); }
+
+    .btn-teal {
+      display:inline-flex; align-items:center; gap:8px;
+      background:var(--teal); color:var(--white);
+      font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+      padding:14px 28px; text-decoration:none; cursor:pointer;
+      transition:background .2s, transform .2s;
+    }
+    .btn-teal:hover { background:var(--teal-2); transform:translateY(-2px); }
+    .btn-teal svg { width:14px; height:14px; }
+
+    .btn-line {
+      display:inline-flex; align-items:center; gap:8px;
+      border-bottom:1px solid var(--border); color:var(--ink);
+      font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+      padding:14px 0; text-decoration:none; cursor:pointer;
+      transition:border-color .2s, color .2s;
+    }
+    .btn-line:hover { border-color:var(--teal); color:var(--teal); }
+
+    .hero-img {
+      position:relative; overflow:hidden;
+      background:var(--warm);
+    }
+    .hero-img img {
+      width:100%; height:100%; object-fit:cover;
+      filter:saturate(.85) brightness(.95);
+      transform:scale(1.06);
+      transition:transform 9s cubic-bezier(.25,.46,.45,.94), filter .6s;
+    }
+    #hjem.on .hero-img img { transform:scale(1); }
+    .hero-img-ov {
+      position:absolute; inset:0;
+      background:linear-gradient(to right, rgba(255,255,255,.12) 0%, transparent 50%);
+    }
+    /* thin teal bar */
+    .hero-accent { position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--teal); z-index:2; }
+
+    /* scroll hint */
+    .hero-scroll {
+      position:absolute; bottom:32px; left:56px; z-index:2;
+      display:flex; align-items:center; gap:10px;
+      font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted-2);
+      opacity:0; transition:opacity .6s 1.5s;
+    }
+    #hjem.on .hero-scroll { opacity:1; }
+    .hs-bar { width:32px; height:1px; background:var(--border); position:relative; overflow:hidden; }
+    .hs-bar::after { content:''; position:absolute; top:0; left:0; width:40%; height:100%; background:var(--teal); animation:hbar 2s ease infinite; }
+    @keyframes hbar { 0%{left:-40%}100%{left:140%} }
+
+    /* ── SECTION SHARED ── */
+    .s-section { padding:100px 56px; }
+    .s-inner { max-width:1300px; margin:0 auto; }
+    .s-label {
+      display:flex; align-items:center; gap:10px; margin-bottom:14px;
+      font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--teal);
+    }
+    .s-label-line { width:22px; height:1px; background:var(--teal); }
+    .s-title {
+      font-family:'Playfair Display', serif;
+      font-size:clamp(32px, 4vw, 48px);
+      font-weight:400; letter-spacing:-.3px; line-height:1.15; color:var(--ink);
+    }
+    .s-title .italic { font-style:italic; }
+    .s-sub { font-size:15px; font-weight:300; color:var(--muted); line-height:1.9; max-width:500px; }
+
+    /* ── TJENESTER ── */
+    #tjenester { background:var(--warm); }
+    .tj-header { display:flex; align-items:flex-end; justify-content:space-between; gap:40px; margin-bottom:64px; }
+    .tj-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+    .tj-card {
+      background:var(--white); padding:48px 44px; cursor:default;
+      transition:box-shadow .3s, transform .25s; position:relative; overflow:hidden;
+    }
+    .tj-card::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+      background:var(--teal); transform:scaleX(0); transform-origin:left;
+      transition:transform .35s cubic-bezier(.16,1,.3,1);
+    }
+    .tj-card:hover { box-shadow:var(--shadow-md); transform:translateY(-3px); }
+    .tj-card:hover::after { transform:scaleX(1); }
+    .tj-num {
+      font-family:'Playfair Display', serif; font-style:italic;
+      font-size:56px; font-weight:400; color:rgba(10,61,74,.06); line-height:1; margin-bottom:4px;
+    }
+    .tj-icon {
+      width:44px; height:44px; border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:20px; transition:border-color .25s, background .25s;
+    }
+    .tj-card:hover .tj-icon { border-color:var(--teal); background:var(--teal-dim); }
+    .tj-icon svg { width:20px; height:20px; color:var(--teal); }
+    .tj-title { font-family:'Playfair Display', serif; font-weight:500; font-size:22px; letter-spacing:-.2px; margin-bottom:12px; color:var(--ink); }
+    .tj-desc { font-size:14px; font-weight:300; color:var(--muted); line-height:1.85; }
+
+    /* ── OM OSS ── */
+    #om-oss { background:var(--white); }
+    .om-grid { display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:center; }
+    .om-img-wrap { position:relative; }
+    .om-img-inner { overflow:hidden; }
+    .om-img-inner img { width:100%; height:520px; object-fit:cover; filter:saturate(.9); display:block; transition:filter .5s; }
+    .om-img-wrap:hover .om-img-inner img { filter:saturate(1.05); }
+    /* minimal corner accent */
+    .om-corner { position:absolute; top:-10px; right:-10px; width:60px; height:60px; border-top:1px solid var(--teal); border-right:1px solid var(--teal); }
+    .om-text {}
+    .om-body { font-size:15px; font-weight:300; color:var(--muted); line-height:2; margin:24px 0 36px; }
+    .om-values { display:flex; flex-direction:column; gap:12px; margin-bottom:40px; }
+    .ov { display:flex; align-items:center; gap:12px; font-size:13px; font-weight:500; color:var(--text-2); }
+    .ov-dot { width:5px; height:5px; background:var(--gold); transform:rotate(45deg); flex-shrink:0; }
+
+    /* ── STATS ── */
+    .stats-band { background:var(--teal); padding:56px; }
+    .stats-inner { max-width:1300px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
+    .stat-c { padding:28px 40px; border-right:1px solid rgba(255,255,255,.12); text-align:center; }
+    .stat-c:last-child { border-right:none; }
+    .stat-n {
+      font-family:'Playfair Display', serif; font-size:clamp(40px,5vw,56px);
+      font-weight:400; color:var(--white); line-height:1; margin-bottom:8px; letter-spacing:-1px;
+    }
+    .stat-n .italic { font-style:italic; }
+    .stat-l { font-size:12px; font-weight:400; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.55); }
+
+    /* ── KONTAKT ── */
+    #kontakt { background:var(--warm); }
+    .k-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+    .k-left .s-title { margin-bottom:14px; }
+    .k-left .s-sub { margin-bottom:40px; }
+    .k-details { display:flex; flex-direction:column; gap:24px; }
+    .kd { display:flex; align-items:flex-start; gap:14px; }
+    .kd-icon { width:38px; height:38px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:border-color .2s; }
+    .kd:hover .kd-icon { border-color:var(--teal); }
+    .kd-icon svg { width:16px; height:16px; color:var(--teal); }
+    .kd-lbl { font-size:9px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted-2); margin-bottom:3px; }
+    .kd-val { font-size:14px; font-weight:400; color:var(--text-2); }
+    .kd-val a { color:var(--text-2); text-decoration:none; cursor:pointer; transition:color .2s; }
+    .kd-val a:hover { color:var(--teal); }
+
+    /* Form */
+    .k-form { background:var(--white); border:1px solid var(--border); padding:44px; }
+    .k-form h3 { font-family:'Playfair Display', serif; font-weight:500; font-size:22px; margin-bottom:28px; color:var(--ink); }
+    .kf-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .kf-g { margin-bottom:16px; }
+    .kf-g label { display:block; font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .kf-g input,.kf-g select,.kf-g textarea {
+      width:100%; background:var(--warm); border:1px solid var(--border);
+      font-family:'Inter',sans-serif; font-size:14px; font-weight:300;
+      color:var(--text); padding:12px 14px; outline:none;
+      transition:border-color .2s;
+    }
+    .kf-g input:focus,.kf-g select:focus,.kf-g textarea:focus { border-color:var(--teal); }
+    .kf-g input::placeholder,.kf-g textarea::placeholder { color:var(--muted-2); }
+    .kf-g textarea { resize:none; min-height:100px; }
+    .kf-g select { cursor:pointer; appearance:none; }
+    .kf-submit {
+      width:100%; background:var(--teal); color:var(--white);
+      font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
+      letter-spacing:2px; text-transform:uppercase;
+      padding:16px; border:none; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:background .2s, transform .2s; margin-top:4px;
+    }
+    .kf-submit:hover { background:var(--teal-2); transform:translateY(-2px); }
+    .kf-submit:disabled { opacity:.6; transform:none; }
+    .kf-success { display:none; background:var(--teal-dim); border:1px solid rgba(10,61,74,.15); color:var(--teal); font-size:13px; padding:14px; text-align:center; margin-top:10px; }
+
+    /* ── FOOTER ── */
+    footer { background:var(--ink); padding:56px 56px 36px; }
+    .footer-inner { max-width:1300px; margin:0 auto; }
+    .footer-top { display:flex; justify-content:space-between; align-items:flex-start; gap:48px; flex-wrap:wrap; margin-bottom:48px; }
+    .fb-brand {}
+    .fb-name {
+      font-family:'Playfair Display', serif; font-weight:500; font-size:18px;
+      color:rgba(255,255,255,.9); margin-bottom:6px;
+    }
+    .fb-type { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:16px; }
+    .fb-reg { font-size:12px; color:rgba(255,255,255,.25); }
+    .footer-links { display:flex; gap:60px; flex-wrap:wrap; }
+    .fc h5 { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:18px; }
+    .fc ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .fc ul a { font-size:13px; font-weight:300; color:rgba(255,255,255,.3); text-decoration:none; cursor:pointer; transition:color .2s; }
+    .fc ul a:hover { color:var(--gold); }
+    .footer-bottom { border-top:1px solid rgba(255,255,255,.07); padding-top:24px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    .footer-bottom p { font-size:11px; color:rgba(255,255,255,.2); }
+    .fbl { display:flex; gap:20px; }
+    .fbl a { font-size:10px; color:rgba(255,255,255,.2); text-decoration:none; cursor:pointer; transition:color .2s; }
+    .fbl a:hover { color:rgba(255,255,255,.5); }
+    .yams-c { margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,.04); display:flex; justify-content:center; }
+
+    #btt { position:fixed; bottom:24px; right:24px; z-index:90; width:40px; height:40px; border:1px solid var(--border); background:var(--white); display:flex; align-items:center; justify-content:center; cursor:pointer; opacity:0; transform:translateY(10px); transition:opacity .3s,transform .3s,background .2s,border-color .2s; }
+    #btt.on { opacity:1; transform:translateY(0); }
+    #btt:hover { background:var(--teal); border-color:var(--teal); }
+    #btt:hover svg { color:white; }
+    #btt svg { width:16px; height:16px; color:var(--teal); transition:color .2s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width:1000px) {
+      #hjem { grid-template-columns:1fr; }
+      .hero-img { height:55vw; min-height:360px; }
+      .hero-img-ov { background:linear-gradient(to top, rgba(255,255,255,.2) 0%, transparent 40%); }
+      .om-grid { grid-template-columns:1fr; gap:52px; }
+      .om-img-wrap { display:none; }
+      .k-grid { grid-template-columns:1fr; gap:52px; }
+      .tj-grid { grid-template-columns:1fr; }
+      .stats-inner { grid-template-columns:1fr; }
+      .stat-c { border-right:none; border-bottom:1px solid rgba(255,255,255,.12); }
+      .stat-c:last-child { border-bottom:none; }
+      .footer-top { flex-direction:column; }
+    }
+    @media (max-width:768px) {
+      nav { padding:0 20px; }
+      .nav-links,.nav-cta { display:none; }
+      .burger { display:flex; }
+      #hjem { padding-top:68px; }
+      .hero-text { padding:48px 24px; }
+      .s-section { padding:72px 20px; }
+      .k-form { padding:28px 20px; }
+      .kf-row { grid-template-columns:1fr; }
+      footer { padding:48px 20px 32px; }
+      .footer-bottom { flex-direction:column; text-align:center; }
+      .tj-header { flex-direction:column; align-items:flex-start; }
+      .stats-band { padding:40px 20px; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition-duration:.01ms !important; } }
+  </style>
+</head>
+<body>
+
+  <button id="btt" aria-label="Til toppen">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+    </svg>
+  </button>
+
+  <!-- ── NAV ── -->
+  <nav id="nav">
+    <a href="#hjem" class="nav-logo">
+      <span class="nav-logo-top">Bro Eiendomsrådgivning</span>
+      <span class="nav-logo-sub">AS</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#tjenester">Tjenester</a></li>
+      <li><a href="#om-oss">Om oss</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+    <a href="#kontakt" class="nav-cta">Ta kontakt</a>
+    <button class="burger" id="burger"><span></span><span></span><span></span></button>
+  </nav>
+  <div class="mob-nav" id="mob-nav">
+    <a href="#tjenester" class="mob-l">Tjenester</a>
+    <a href="#om-oss" class="mob-l">Om oss</a>
+    <a href="#kontakt" class="mob-l">Kontakt</a>
+  </div>
+
+  <!-- ── HERO ── -->
+  <section id="hjem">
+    <div class="hero-text">
+      <div class="hero-tag">
+        <span class="hero-tag-line"></span>
+        Bedriftsrådgivning &amp; Investeringer
+      </div>
+      <h1 class="hero-title">
+        <span class="line"><span>Vi bygger</span></span>
+        <span class="line"><span>broer til</span></span>
+        <span class="line"><span class="italic">nye muligheter.</span></span>
+      </h1>
+      <div class="hero-rule"></div>
+      <p class="hero-sub">Bro Eiendomsrådgivning AS tilbyr rådgivning innen bedriftsutvikling, eiendom og strategiske investeringer — med lang erfaring og et sterkt nettverk.</p>
+      <div class="hero-ctas">
+        <a href="#tjenester" class="btn-teal">
+          Se tjenester
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+        <a href="#kontakt" class="btn-line">Ta kontakt</a>
+      </div>
+      <div class="hero-scroll"><div class="hs-bar"></div>Scroll</div>
+    </div>
+    <div class="hero-img">
+      <div class="hero-accent"></div>
+      <img
+        src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=85"
+        alt="Eiendom og rådgivning"
+        loading="eager"
+        onerror="this.src='https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1200&q=85'"
+      />
+      <div class="hero-img-ov"></div>
+    </div>
+  </section>
+
+  <!-- ── TJENESTER ── -->
+  <section id="tjenester" class="s-section">
+    <div class="s-inner">
+      <div class="tj-header">
+        <div>
+          <div class="s-label reveal"><span class="s-label-line"></span>Hva vi tilbyr</div>
+          <h2 class="s-title reveal d1">Våre <span class="italic">tjenester.</span></h2>
+        </div>
+        <p class="s-sub reveal d2" style="text-align:right">Vi leverer rådgivning tilpasset din situasjon — enten du er i oppstartsfase, vekstfase eller søker strategiske partnere.</p>
+      </div>
+      <div class="tj-grid">
+
+        <div class="tj-card reveal">
+          <div class="tj-num">01</div>
+          <div class="tj-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <div class="tj-title">Bedriftsrådgivning</div>
+          <div class="tj-desc">Strategisk rådgivning for virksomheter i alle størrelser og faser. Vi hjelper med forretningsutvikling, strukturering og optimalisering av drift og økonomi.</div>
+        </div>
+
+        <div class="tj-card reveal d1">
+          <div class="tj-num">02</div>
+          <div class="tj-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+          </div>
+          <div class="tj-title">Eiendomsrådgivning</div>
+          <div class="tj-desc">Rådgivning innen kjøp, salg og forvaltning av eiendom. Vi bistår med analyser, verdivurderinger og strategiske beslutninger knyttet til eiendomsporteføljer.</div>
+        </div>
+
+        <div class="tj-card reveal d2">
+          <div class="tj-num">03</div>
+          <div class="tj-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </div>
+          <div class="tj-title">Investeringer</div>
+          <div class="tj-desc">Vi bidrar med kapital og kompetanse i strategiske investeringer og deltakelse i selskaper. Med et bredt nettverk identifiserer vi muligheter med solid potensial.</div>
+        </div>
+
+        <div class="tj-card reveal d3">
+          <div class="tj-num">04</div>
+          <div class="tj-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <div class="tj-title">Selskapsdeltagelse</div>
+          <div class="tj-desc">Aktiv eller passiv deltakelse i virksomheter der vår kompetanse, kapital og nettverk kan tilføre verdi. Vi er en langsiktig og engasjert samarbeidspartner.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATS ── -->
+  <div class="stats-band">
+    <div class="stats-inner">
+      <div class="stat-c reveal">
+        <div class="stat-n"><span class="italic">Lokal</span></div>
+        <div class="stat-l">Kunnskap &amp; tilstedeværelse</div>
+      </div>
+      <div class="stat-c reveal d1">
+        <div class="stat-n"><span class="italic">Langsiktig</span></div>
+        <div class="stat-l">Perspektiv i alle prosesser</div>
+      </div>
+      <div class="stat-c reveal d2">
+        <div class="stat-n"><span class="italic">Helhetlig</span></div>
+        <div class="stat-l">Rådgivning fra idé til resultat</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OM OSS ── -->
+  <section id="om-oss" class="s-section">
+    <div class="s-inner">
+      <div class="om-grid">
+        <div class="om-img-wrap">
+          <div class="om-corner"></div>
+          <div class="om-img-inner img-wipe">
+            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=85" alt="Profesjonell rådgivning" loading="lazy"/>
+          </div>
+        </div>
+        <div class="om-text">
+          <div class="s-label reveal"><span class="s-label-line"></span>Om oss</div>
+          <h2 class="s-title reveal d1" style="margin-bottom:6px">En pålitelig <span class="italic">partner.</span></h2>
+          <p class="om-body reveal d2">Bro Eiendomsrådgivning AS er et norsk aksjeselskap som tilbyr rådgivningstjenester innen bedrift, eiendom og investeringer. Vi samarbeider tett med våre klienter og legger vekt på ærlighet, grundighet og langsiktige relasjoner.</p>
+          <p class="om-body reveal d3" style="margin-top:-20px">Gjennom deltakelse i andre selskaper og nærliggende virksomhet skaper vi synergier som gir merverdi for alle involverte parter. Vår tilnærming er alltid helhetlig — vi ser hele bildet.</p>
+          <div class="om-values reveal d4">
+            <div class="ov"><div class="ov-dot"></div>Integritet og ærlighet i alle prosesser</div>
+            <div class="ov"><div class="ov-dot"></div>Langsiktige partnerskap fremfor kortsiktige gevinster</div>
+            <div class="ov"><div class="ov-dot"></div>Solid faglig kompetanse og bredt nettverk</div>
+            <div class="ov"><div class="ov-dot"></div>Skreddersydde løsninger for hver klient</div>
+          </div>
+          <a href="#kontakt" class="btn-teal reveal" style="width:fit-content">
+            Ta kontakt
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── KONTAKT ── -->
+  <section id="kontakt" class="s-section">
+    <div class="s-inner">
+      <div class="k-grid">
+        <div class="k-left">
+          <div class="s-label reveal"><span class="s-label-line"></span>Kontakt oss</div>
+          <h2 class="s-title reveal d1" style="margin-bottom:14px">La oss snakke<br/><span class="italic">om dine mål.</span></h2>
+          <p class="s-sub reveal d2">Vi er alltid åpne for en uforpliktende samtale. Ta kontakt — vi svarer raskt.</p>
+          <div class="k-details reveal d3">
+            <div class="kd">
+              <div class="kd-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></div>
+              <div><div class="kd-lbl">Telefon</div><div class="kd-val"><a href="tel:">Ring oss</a></div></div>
+            </div>
+            <div class="kd">
+              <div class="kd-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+              <div><div class="kd-lbl">E-post</div><div class="kd-val"><a href="mailto:post@broeiendom.no">post@broeiendom.no</a></div></div>
+            </div>
+            <div class="kd">
+              <div class="kd-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
+              <div><div class="kd-lbl">Selskap</div><div class="kd-val">Bro Eiendomsrådgivning AS</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="k-form reveal d2">
+          <h3>Send en forespørsel</h3>
+          <form id="kform" novalidate>
+            <div class="kf-row">
+              <div class="kf-g"><label>Navn *</label><input type="text" required placeholder="Ditt navn"/></div>
+              <div class="kf-g"><label>E-post *</label><input type="email" required placeholder="din@epost.no"/></div>
+            </div>
+            <div class="kf-g"><label>Telefon</label><input type="tel" placeholder="+47 000 00 000"/></div>
+            <div class="kf-g">
+              <label>Hva gjelder henvendelsen?</label>
+              <select>
+                <option value="">Velg tema...</option>
+                <option>Bedriftsrådgivning</option>
+                <option>Eiendomsrådgivning</option>
+                <option>Investeringer</option>
+                <option>Selskapsdeltagelse</option>
+                <option>Annet</option>
+              </select>
+            </div>
+            <div class="kf-g"><label>Melding</label><textarea placeholder="Beskriv kort hva du ønsker å diskutere..."></textarea></div>
+            <button type="submit" class="kf-submit" id="kfsub">
+              <svg style="width:14px;height:14px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              Send forespørsel
+            </button>
+            <div class="kf-success" id="kfsuccess">Takk. Vi tar kontakt så snart som mulig.</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="fb-brand">
+          <div class="fb-name">Bro Eiendomsrådgivning</div>
+          <div class="fb-type">AS</div>
+          <div class="fb-reg">Bedriftsrådgivning · Eiendom · Investeringer</div>
+        </div>
+        <div class="footer-links">
+          <div class="fc">
+            <h5>Tjenester</h5>
+            <ul>
+              <li><a href="#tjenester">Bedriftsrådgivning</a></li>
+              <li><a href="#tjenester">Eiendomsrådgivning</a></li>
+              <li><a href="#tjenester">Investeringer</a></li>
+              <li><a href="#tjenester">Selskapsdeltagelse</a></li>
+            </ul>
+          </div>
+          <div class="fc">
+            <h5>Selskapet</h5>
+            <ul>
+              <li><a href="#om-oss">Om oss</a></li>
+              <li><a href="#kontakt">Kontakt</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Bro Eiendomsrådgivning AS. Alle rettigheter forbeholdt.</p>
+        <div class="fbl">
+          <a href="#">Personvern</a>
+          <a href="#">Vilkår</a>
+        </div>
+      </div>
+      <!-- YAMS AS Primary Dark -->
+      <div class="yams-c">
+        <div style="display:inline-flex;align-items:center;gap:10px;background:#0B0B0B;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:12px 22px;">
+          <svg width="18" height="24" viewBox="0 0 34 46" fill="none">
+            <line x1="2" y1="2" x2="17" y2="19" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="32" y1="2" x2="17" y2="19" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="17" y1="19" x2="17" y2="44" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+            <circle cx="17" cy="19" r="4.5" fill="#C8A660"/>
+          </svg>
+          <div style="display:flex;align-items:baseline;gap:4px;line-height:1;">
+            <span style="font-family:'Outfit','Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.5px;color:#FFFFFF;">YAMS</span>
+            <span style="font-family:'Outfit','Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,.4);">AS</span>
+          </div>
+          <span style="width:1px;height:16px;background:rgba(255,255,255,.12);display:block;"></span>
+          <span style="font-family:'Outfit','Helvetica Neue',Arial,sans-serif;font-size:10px;font-weight:400;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.28);">Website Solutions</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 60), { passive: true });
+
+    // Hero load
+    const hero = document.getElementById('hjem');
+    const go = () => hero.classList.add('on');
+    window.addEventListener('load', go);
+    setTimeout(go, 100);
+
+    // Mobile menu
+    const burger = document.getElementById('burger'), mob = document.getElementById('mob-nav');
+    let mo = false;
+    burger.addEventListener('click', () => {
+      mo = !mo; mob.classList.toggle('open', mo);
+      const s = burger.querySelectorAll('span');
+      s[0].style.transform = mo ? 'rotate(45deg) translate(5px,5px)' : '';
+      s[1].style.opacity = mo ? '0' : '1';
+      s[2].style.transform = mo ? 'rotate(-45deg) translate(5px,-5px)' : '';
+    });
+    document.querySelectorAll('.mob-l').forEach(l => l.addEventListener('click', () => {
+      mo = false; mob.classList.remove('open');
+      burger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }));
+
+    // Reveal
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+    }, { threshold: .08, rootMargin: '0px 0px -28px 0px' });
+    document.querySelectorAll('.reveal, .reveal-l').forEach(el => obs.observe(el));
+
+    // img-wipe
+    const wObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.style.clipPath = 'inset(0 0% 0 0)'; wObs.unobserve(e.target); } });
+    }, { threshold: .1 });
+    document.querySelectorAll('.img-wipe').forEach(el => {
+      el.style.clipPath = 'inset(0 100% 0 0)';
+      el.style.transition = 'clip-path 1s cubic-bezier(.77,0,.18,1)';
+      wObs.observe(el);
+    });
+
+    // Back to top
+    const btt = document.getElementById('btt');
+    window.addEventListener('scroll', () => btt.classList.toggle('on', scrollY > 400), { passive: true });
+    btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // Form
+    document.getElementById('kform').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!e.target.checkValidity()) { e.target.reportValidity(); return; }
+      const btn = document.getElementById('kfsub');
+      btn.disabled = true;
+      btn.textContent = 'Sender...';
+      setTimeout(() => {
+        btn.style.display = 'none';
+        document.getElementById('kfsuccess').style.display = 'block';
+        e.target.reset();
+      }, 1400);
+    });
+
+    // Smooth anchor
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+  </script>
+</body>
+</html>
